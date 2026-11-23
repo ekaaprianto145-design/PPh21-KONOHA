@@ -403,6 +403,11 @@
       }
     }
   </style>
+  .input-bulan-tunj {
+  min-width: 96px;
+  padding: 6px 8px;
+  font-size: 0.82rem;
+}
 </head>
 <body>
 
@@ -1118,6 +1123,34 @@
             </tr>
           </thead>
           <tbody>
+          <tr>
+              <td>Gaji Pokok (${k.bulan} Bulan)</td>
+              <td style="text-align:right;">${formatRupiah(gapokTahunan)}</td>
+            </tr>
+            <tr>
+              <td>Total Tunjangan (Januari – Desember • ${k.nama})</td>
+              <td style="text-align:right;">${formatRupiah(totalTunjanganTahunan)}</td>
+            </tr>
+            <tr>
+              <td>THR Tahunan</td>
+              <td style="text-align:right;">${formatRupiah(k.thr)}</td>
+            </tr>
+            <tr>
+              <td><strong>Total Pendapatan Tahunan</strong></td>
+              <td style="text-align:right;"><strong>${formatRupiah(totalPendapatanTahunan)}</strong></td>
+            </tr>
+            <tr>
+              <td>Potongan PPh 21 Setahun</td>
+              <td style="text-align:right; color:#b91c1c;">- ${formatRupiah(k.pphSetahun)}</td>
+            </tr>
+            <tr>
+              <td>Potongan PPh 21 Masa Desember</td>
+              <td style="text-align:right; color:#b91c1c;">- ${formatRupiah(k.pphDes)}</td>
+            </tr>
+            <tr class="slip-total">
+              <td>Gaji Bersih Diterima (Tahunan)</td>
+              <td style="text-align:right;">${formatRupiah(gajiBersihTahunan)}</td>
+            </tr>
             <tr>
               <td>Gaji Pokok</td>
               <td style="text-align:right;">${formatRupiah(k.gapok)}</td>
@@ -1148,6 +1181,7 @@
         </table>
 
         <div class="slip-footer">
+        
           <div>
             <div>Disetujui Oleh,</div>
             <div style="margin-top:42px; font-weight:700;">Bagian Keuangan Konoha</div>
@@ -1156,6 +1190,9 @@
             <div>Penerima,</div>
             <div style="margin-top:42px; font-weight:700;">${k.nama}</div>
           </div>
+        </div>
+        <div class="slip-note" style="margin-top: 16px; font-size: 0.8rem; color: #4b5563; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
+          Periode Desember / Tahunan • Total Tunjangan (Januari – Desember) disesuaikan dengan nama karyawan.
         </div>
       `;
     }
