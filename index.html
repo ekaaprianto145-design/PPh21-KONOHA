@@ -447,6 +447,28 @@
               </p>
             </div>
             <div style="display:flex; gap:8px;">
+              <!-- TABEL DAFTAR TUNJANGAN DINAMIS -->
+        <div style="margin-top: 26px; border-top: 1px solid var(--border); padding-top: 20px;">
+          <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px;">
+            <div>
+              <h3 style="color: var(--naruto-gold);">💼 Daftar Tunjangan (Otomatis Sesuai Jumlah Kolom)</h3>
+              <p style="color: var(--text-muted); font-size:0.85rem;">
+                Atur <strong>Jumlah Kolom Tunjangan</strong> per karyawan atau tambah/hapus kolom tunjangan. Totalnya otomatis masuk ke kolom <strong>Tunjangan (Rp)</strong>.
+              </p>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button type="button" class="btn-secondary" onclick="tambahKolomTunjangan()">+ Tambah Kolom Tunjangan</button>
+              <button type="button" class="btn-danger" onclick="hapusKolomTunjangan()">- Hapus Kolom Terakhir</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead id="tunjanganHead"></thead>
+              <tbody id="tunjanganBody"></tbody>
+            </table>
+          </div>
+        </div>
               <button type="button" class="btn-success" onclick="tambahKaryawan()">+ Tambah Nama</button>
               <button type="button" class="btn-primary" onclick="pindahHalaman('hitung')">Lihat Hasil Perhitungan →</button>
             </div>
@@ -583,6 +605,146 @@
     ];
 
     let selectedSlipId = dataKaryawan[0].id;
+    function renderSemua() {
+      sinkronkanStrukturTunjangan();
+      renderDaftarTable();
+      renderDaftarTunjangan();
+      renderHitungTable();
+      renderSlipDropdownAndPaper();
+    }
+    // Daftar nama kolom tunjangan (bisa ditambah/dihapus dinamis)
+    let daftarKolomTunjangan = [
+      "Tunj. Transport",
+      "Tunj. Makan",
+      "Tunj. Jabatan",
+      "Tunj. Komunikasi"
+    ];
+
+    // Pastikan setiap karyawan punya array nominal tunjangan & jumlah kolom aktif
+    function sinkronkanStrukturTunjangan() {
+      dataKaryawan.forEach(k => {
+        if (!Array.isArray(k.listTunjangan)) {
+          k.listTunjangan = daftarKolomTunjangan.map((_, idx) =>
+            idx === 0 ? (Number(k.tunjangan) || 0) : 0
+          );
+        }
+        while (k.listTunjangan.length < daftarKolomTunjangan.length) {
+          k.listTunjangan.push(0);
+        }
+        if (k.listTunjangan.length > daftarKolomTunjangan.length) {
+          k.listTunjangan = k.listTunjangan.slice(0, daftarKolomTunjangan.length);
+        }
+        if (typeof k.jumlahKolomTunjangan !== "number") {
+          k.jumlahKolomTunjangan = daftarKolomTunjangan.length;
+        }
+        k.jumlahKolomTunjangan = Math.max(
+          0,
+          Math.min(daftarKolomTunjangan.length, k.jumlahKolomTunjangan)
+        );
+      });
+    }
+
+    function hitungTotalTunjanganDariKolom(k) {
+      const batasKolom = Math.max(
+        0,
+        Math.min(k.listTunjangan.length, Number(k.jumlahKolomTunjangan) || 0)
+      );
+      let total = 0;
+      for (let i = 0; i < batasKolom; i++) {
+        total += Number(k.listTunjangan[i]) || 0;
+      }
+      return total;
+    }
+
+    function updateTunjanganItem(id, indexKolom, rawVal) {
+      const k = dataKaryawan.find(item => item.id === id);
+      if (!k) return;
+      k.listTunjangan[indexKolom] = parseAngka(rawVal);
+      k.tunjangan = hitungTotalTunjanganDariKolom(k);
+      hitungUlangItem(k, true);
+      renderSemua();
+    }
+
+    function updateJumlahKolomTunjangan(id, rawJml) {
+      const k = dataKaryawan.find(item => item.id === id);
+      if (!k) return;
+      const maks = daftarKolomTunjangan.length;
+      k.jumlahKolomTunjangan = Math.max(0, Math.min(maks, parseInt(rawJml, 10) || 0));
+      k.tunjangan = hitungTotalTunjanganDariKolom(k);
+      hitungUlangItem(k, true);
+      renderSemua();
+    }
+
+    function tambahKolomTunjangan() {
+      const namaBaru = prompt("Nama kolom tunjangan baru:", "Tunj. Lainnya " + (daftarKolomTunjangan.length + 1));
+      if (!namaBaru || !namaBaru.trim()) return;
+      daftarKolomTunjangan.push(namaBaru.trim());
+      dataKaryawan.forEach(k => {
+        k.listTunjangan.push(0);
+        k.jumlahKolomTunjangan = daftarKolomTunjangan.length;
+      });
+      renderSemua();
+    }
+
+    function hapusKolomTunjangan() {
+      if (daftarKolomTunjangan.length <= 1) {
+        alert("Minimal harus ada 1 kolom tunjangan.");
+        return;
+      }
+      daftarKolomTunjangan.pop();
+      dataKaryawan.forEach(k => {
+        k.listTunjangan.pop();
+        k.jumlahKolomTunjangan = Math.min(k.jumlahKolomTunjangan, daftarKolomTunjangan.length);
+        k.tunjangan = hitungTotalTunjanganDariKolom(k);
+        hitungUlangItem(k, true);
+      });
+      renderSemua();
+    }
+
+    function renderDaftarTunjangan() {
+      sinkronkanStrukturTunjangan();
+      const thead = document.getElementById("tunjanganHead");
+      const tbody = document.getElementById("tunjanganBody");
+      if (!thead || !tbody) return;
+
+      thead.innerHTML = `
+        <tr>
+          <th>No</th>
+          <th>Nama</th>
+          <th>Jml Kolom Dihitung</th>
+          ${daftarKolomTunjangan.map((judul, i) => `<th>${judul} (Kol. ${i + 1})</th>`).join("")}
+          <th class="num">Total Tunjangan</th>
+        </tr>
+      `;
+
+      tbody.innerHTML = dataKaryawan.map((k, idx) => {
+        const totalTunj = hitungTotalTunjanganDariKolom(k);
+        return `
+          <tr>
+            <td>${idx + 1}</td>
+            <td><strong>${k.nama}</strong></td>
+            <td>
+              <input type="number" min="0" max="${daftarKolomTunjangan.length}"
+                class="inline-input" style="width:82px;"
+                value="${k.jumlahKolomTunjangan}"
+                onchange="updateJumlahKolomTunjangan(${k.id}, this.value)" />
+            </td>
+            ${daftarKolomTunjangan.map((_, colIdx) => {
+              const aktif = colIdx < k.jumlahKolomTunjangan;
+              return `
+                <td>
+                  <input type="number" class="inline-input num"
+                    style="${aktif ? "" : "opacity:0.45;"}"
+                    value="${k.listTunjangan[colIdx] || 0}"
+                    onchange="updateTunjanganItem(${k.id}, ${colIdx}, this.value)" />
+                </td>
+              `;
+            }).join("")}
+            <td class="num"><strong>${formatRupiah(totalTunj)}</strong></td>
+          </tr>
+        `;
+      }).join("");
+    }
 
     function formatRupiah(angka) {
       const num = Number(angka) || 0;
