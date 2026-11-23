@@ -406,6 +406,7 @@
         <button type="button" class="btn-secondary" id="nav-daftar" onclick="pindahHalaman('daftar')">📝 Daftar & TER</button>
         <button type="button" class="btn-secondary" id="nav-hitung" onclick="pindahHalaman('hitung')">📊 Perhitungan PPh 21</button>
         <button type="button" class="btn-secondary" id="nav-slip" onclick="pindahHalaman('slip')">🧾 Slip Gaji</button>
+        <button type="button" class="btn-secondary" id="nav-tunjangan" onclick="pindahHalaman('tunjangan')">💼 Daftar Tunjangan</button>
         <button type="button" class="btn-secondary" onclick="gantiSandi()">🔑 Ganti Sandi</button>
         <button type="button" class="btn-danger" onclick="kunciKembali()">🔒 Kunci</button>
       </nav>
@@ -415,6 +416,7 @@
       <!-- 1. MENU UTAMA -->
       <section id="page-home">
         <div class="card hero-naruto">
+         <div class="menu-tile" onclick="pindahHalaman('tunjangan')"> 
           <div>
             <h2 style="color: var(--naruto-gold); font-size: 1.4rem;">🔥 Selamat Datang di Markas PPh 21 Konoha</h2>
             <p style="color: var(--text-muted); margin-top: 6px;">
@@ -437,6 +439,9 @@
             <h3>🧾 3. Slip Gaji & Cetak (Print)</h3>
             <p>Pilih nama karyawan & periode bulan, beralih antara Slip Bulanan / 12 Bulan, dan cetak langsung ke printer atau PDF.</p>
           </div>
+          <h3>💼 4. Daftar Tunjangan</h3>
+            <p>Kelola daftar tunjangan bulanan (Januari – Desember) di menu terpisah, otomatis masuk ke Tunjangan karyawan & Slip Gaji.</p>
+         </div>
         </div>
       </section>
       
