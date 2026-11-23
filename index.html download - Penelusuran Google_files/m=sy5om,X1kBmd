@@ -1,0 +1,9 @@
+loaded_h_0(function(_){var window=this;
+_.Lyt=class extends _.m{constructor(a){super(a)}oa(){return _.p(this,_.KD,1)}};_.Lyt.prototype.Ua="pwtiR";
+_.w("X1kBmd");
+var X8E=_.Jb(_.Lyt,[0,_.sld]);
+_.lg(_.f9a,class extends _.Fo{static Sa(){return{service:{yi:_.bK}}}constructor(a){super();this.yi=a.service.yi}prefetch(a){return this.yi.prefetch(a)}showViewerLite(a){var b=a.getInteractionContext?.();a={K_:a.getClickTimestamp?.(),viewerType:a.getViewerType(),modalityOverride:a.getModalityOverride?(0,_.e9d)(a.getModalityOverride()):void 0,entrypoint:a.getEntrypoint(),interactionVed:a.getInteractionVed(),hy:b!==void 0?_.EYa(new _.kq,b):void 0,RGa:a.getReplaceContainingViewer(),contentPluginType:a.getContentPluginType(),
+Jaa:a.getSerializedPluginData(),qDb:!!a.getUseDomSwipeGroup?.(),fR:a.getSerializedCloseConfig?(0,_.Z8d)(a.getSerializedCloseConfig()):void 0,contentId:a.getContentId?.(),E4:a.getDisableEntrypointMorph?.(),shellStyleClass:a.getShellStyleClass?.(),eH:a.getSerializedSwipeConfig?X8E(a.getSerializedSwipeConfig()):void 0};return this.yi.showViewerLite(a)}});
+_.x();
+});
+// Google Inc.
