@@ -267,6 +267,12 @@
       font-size: 0.84rem;
     }
 
+    .month-input {
+      min-width: 102px;
+      padding: 6px 8px;
+      font-size: 0.82rem;
+    }
+
     .inline-select {
       min-width: 96px;
       padding: 6px 8px;
@@ -398,12 +404,13 @@
         <div class="konoha-badge">葉</div>
         <div>
           <h1>SISTEM PPh 21 KONOHA</h1>
-          <small>Menu Utama • Daftar & Golongan TER • Perhitungan • Slip Gaji</small>
+          <small>Menu Utama • Daftar & Golongan TER • Tunjangan • Perhitungan • Slip Gaji</small>
         </div>
       </div>
       <nav class="nav-buttons">
         <button type="button" class="btn-secondary active" id="nav-home" onclick="pindahHalaman('home')">🏠 Menu Utama</button>
         <button type="button" class="btn-secondary" id="nav-daftar" onclick="pindahHalaman('daftar')">📝 Daftar & TER</button>
+        <button type="button" class="btn-secondary" id="nav-tunjangan" onclick="pindahHalaman('tunjangan')">💼 Daftar Tunjangan</button>
         <button type="button" class="btn-secondary" id="nav-hitung" onclick="pindahHalaman('hitung')">📊 Perhitungan PPh 21</button>
         <button type="button" class="btn-secondary" id="nav-slip" onclick="pindahHalaman('slip')">🧾 Slip Gaji</button>
         <button type="button" class="btn-secondary" onclick="gantiSandi()">🔑 Ganti Sandi</button>
@@ -418,7 +425,7 @@
           <div>
             <h2 style="color: var(--naruto-gold); font-size: 1.4rem;">🔥 Selamat Datang di Markas PPh 21 Konoha</h2>
             <p style="color: var(--text-muted); margin-top: 6px;">
-              Ubah nama pendaftar/karyawan, atur golongan TER secara otomatis ke perhitungan, dan cetak slip gaji.
+              Ubah nama pendaftar/karyawan, kelola tunjangan bulanan Januari–Desember, atur golongan TER, dan cetak slip gaji.
             </p>
           </div>
           <button type="button" class="btn-primary" onclick="pindahHalaman('daftar')">+ Kelola Daftar & Golongan TER</button>
@@ -429,30 +436,75 @@
             <h3>📝 1. Menu Daftar & Golongan TER</h3>
             <p>Ubah nama pendaftar/karyawan, atur status PTKP, pilih Golongan TER (TER A, TER B, TER C), dan otomatis masuk ke perhitungan.</p>
           </div>
+          <div class="menu-tile" onclick="pindahHalaman('tunjangan')">
+            <h3>💼 2. Daftar Tunjangan (Januari – Desember)</h3>
+            <p>Input nominal tunjangan bulanan per nama karyawan (Januari–Desember); otomatis dipakai di Slip Gaji Bulanan & Total Tahunan.</p>
+          </div>
           <div class="menu-tile" onclick="pindahHalaman('hitung')">
-            <h3>📊 2. Tabel Perhitungan PPh 21</h3>
-            <p>Pantau perhitungan Gaji Pokok, Tunjangan, THR, Bruto, Biaya Jabatan, Neto, PKP, Tarif TER, dan PPh 21 dalam format Rupiah.</p>
+            <h3>📊 3. Tabel Perhitungan PPh 21</h3>
+            <p>Pantau perhitungan Gaji Pokok, Tunjangan, THR, Bruto, Biaya Jabatan, Neto, PKP, dan PPh 21 dalam format Rupiah.</p>
           </div>
           <div class="menu-tile" onclick="pindahHalaman('slip')">
-            <h3>🧾 3. Slip Gaji & Cetak (Print)</h3>
-            <p>Pilih nama karyawan & periode bulan, beralih antara Slip Bulanan / 12 Bulan, dan cetak langsung ke printer atau PDF.</p>
+            <h3>🧾 4. Slip Gaji & Cetak (Print)</h3>
+            <p>Slip Bulanan memakai tunjangan per bulan; Slip Tahunan (12 Bulan) memakai total tunjangan Januari sampai Desember.</p>
           </div>
         </div>
       </section>
 
       <!-- 2. MENU DAFTAR -->
       <section id="page-daftar" class="hidden">
+        <!-- MENU DAFTAR TUNJANGAN (TABEL PERSEGI PANJANG JANUARI - DESEMBER) -->
+      <section id="page-tunjangan" class="hidden">
+        <div class="card">
+          <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; margin-bottom:16px;">
+            <div>
+              <h2 style="color: var(--naruto-gold);">💼 Daftar Tunjangan (Januari – Desember)</h2>
+              <p style="color: var(--text-muted); font-size:0.88rem;">
+                Isi tunjangan bulanan <strong>JANUARI</strong> sampai <strong>DESEMBER</strong> per karyawan. Otomatis masuk ke <strong>Perhitungan PPh 21</strong> dan <strong>Slip Gaji</strong>.
+              </p>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button type="button" class="btn-secondary" onclick="pindahHalaman('daftar')">← Kembali ke Daftar</button>
+              <button type="button" class="btn-primary" onclick="pindahHalaman('slip')">Buka Slip Gaji →</button>
+            </div>
+          </div>
+
+          <div style="overflow-x:auto; border:2px solid #eab308; border-radius:6px; background:#121620;">
+            <table style="width:100%; border-collapse:collapse; font-size:0.84rem; white-space:nowrap;">
+              <thead>
+                <tr>
+                  <th style="border:1px solid #475569; background:#1e293b; color:#ff4d4d; padding:8px; text-align:left;">NAMA</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">JANUARI</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">FEBUARI</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">MARET</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">APRIL</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">MEI</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">JUNI</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">JULI</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">AGUSTUS</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">SEPTEMBER</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">OKTOBER</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">NOVEMBER</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">DESEMBER</th>
+                  <th style="border:1px solid #475569; background:#f59e0b; color:#111827; padding:8px; text-align:right;">TOTAL JAN–DES</th>
+                </tr>
+              </thead>
+              <tbody id="tunjanganBulanBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
         <div class="card">
           <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; margin-bottom:16px;">
             <div>
               <h2 style="color: var(--naruto-gold);">📝 Menu Daftar Pendaftar / Karyawan</h2>
               <p style="color: var(--text-muted); font-size:0.88rem;">
-                Perubahan <strong>Nama</strong>, <strong>Status PTKP</strong>, <strong>Golongan TER</strong>, <strong>Bulan Tunjangan</strong>, atau <strong>Gaji</strong> otomatis masuk ke Halaman Perhitungan & Slip Gaji.
+                Perubahan <strong>Nama</strong>, <strong>Status PTKP</strong>, <strong>Golongan TER</strong>, atau <strong>Gaji</strong> otomatis masuk ke Halaman Perhitungan & Slip Gaji.
               </p>
             </div>
             <div style="display:flex; gap:8px;">
               <button type="button" class="btn-success" onclick="tambahKaryawan()">+ Tambah Nama</button>
-              <button type="button" class="btn-primary" onclick="pindahHalaman('hitung')">Lihat Hasil Perhitungan →</button>
+              <button type="button" class="btn-primary" onclick="pindahHalaman('tunjangan')">Kelola Daftar Tunjangan →</button>
             </div>
           </div>
 
@@ -465,9 +517,8 @@
                   <th>Status PTKP</th>
                   <th>Golongan TER</th>
                   <th>Bln</th>
-                  <th>Bln Tunj.</th>
                   <th>Gaji Pokok (Rp)</th>
-                  <th>Tunjangan (Rp)</th>
+                  <th>Tunjangan Rata²/Bln (Rp)</th>
                   <th>THR (Rp)</th>
                   <th>Aksi</th>
                 </tr>
@@ -478,14 +529,56 @@
         </div>
       </section>
 
+      <!-- MENU BARU: DAFTAR TUNJANGAN (JANUARI - DESEMBER) -->
+      <section id="page-tunjangan" class="hidden">
+        <div class="card">
+          <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; margin-bottom:16px;">
+            <div>
+              <h2 style="color: var(--naruto-gold);">💼 Daftar Tunjangan (Januari – Desember)</h2>
+              <p style="color: var(--text-muted); font-size:0.88rem;">
+                Tunjangan tiap bulan mengikuti tabel di bawah. <strong>Slip Bulanan</strong> mengambil nominal bulan terpilih, sedangkan <strong>Slip Tahunan</strong> menjumlahkan <strong>Januari – Desember</strong>.
+              </p>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button type="button" class="btn-secondary" onclick="pindahHalaman('daftar')">← Kembali ke Daftar</button>
+              <button type="button" class="btn-primary" onclick="pindahHalaman('slip')">Buka Slip Gaji →</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="color:#ff5e5e;">NAMA</th>
+                  <th style="background:#facc15; color:#111827;">JANUARI</th>
+                  <th style="background:#facc15; color:#111827;">FEBUARI</th>
+                  <th style="background:#facc15; color:#111827;">MARET</th>
+                  <th style="background:#facc15; color:#111827;">APRIL</th>
+                  <th style="background:#facc15; color:#111827;">MEI</th>
+                  <th style="background:#facc15; color:#111827;">JUNI</th>
+                  <th style="background:#facc15; color:#111827;">JULI</th>
+                  <th style="background:#facc15; color:#111827;">AGUSTUS</th>
+                  <th style="background:#facc15; color:#111827;">SEPTEMBER</th>
+                  <th style="background:#facc15; color:#111827;">OKTOBER</th>
+                  <th style="background:#facc15; color:#111827;">NOVEMBER</th>
+                  <th style="background:#facc15; color:#111827;">DESEMBER</th>
+                  <th class="num">TOTAL JAN–DES</th>
+                </tr>
+              </thead>
+              <tbody id="tunjanganBulanBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <!-- 3. HALAMAN PERHITUNGAN PPh 21 -->
       <section id="page-hitung" class="hidden">
         <div class="card">
           <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; margin-bottom:16px;">
             <div>
-              <h2 style="color: var(--naruto-gold);">📊 Tabel Perhitungan PPh 21 (TER A / B / C)</h2>
+              <h2 style="color: var(--naruto-gold);">📊 Tabel Perhitungan PPh 21 (Otomatis)</h2>
               <p style="color: var(--text-muted); font-size:0.88rem;">
-                PPh 21 Bulanan menggunakan tarif efektif kategori TER A, B, dan C sesuai bruto bulanan; PPh 21 Desember merekonsiliasi pajak setahun.
+                Otomatis tersinkronisasi dari Menu Daftar, Daftar Tunjangan Bulanan, & Golongan TER dalam format Rupiah.
               </p>
             </div>
             <div style="display:flex; gap:8px;">
@@ -503,18 +596,15 @@
                   <th>Status</th>
                   <th>PTKP</th>
                   <th>Gol. TER</th>
-                  <th>Tarif TER</th>
                   <th>Bln</th>
-                  <th>Bln Tunj.</th>
                   <th class="num">Gaji Pokok</th>
-                  <th class="num">Tunjangan</th>
+                  <th class="num">Total Tunj. (12 Bln)</th>
                   <th class="num">THR</th>
                   <th class="num">Bruto Bulanan</th>
                   <th class="num">Bruto Tahunan</th>
                   <th class="num">Biaya Jabatan</th>
                   <th class="num">Neto Tahunan</th>
                   <th class="num">PKP</th>
-                  <th class="num">PPh 21 Bulanan</th>
                   <th class="num">PPh 21 Setahun</th>
                   <th class="num">PPh 21 Desember</th>
                   <th>Slip</th>
@@ -550,7 +640,7 @@
             </select>
 
             <button type="button" class="btn-primary" id="btnModeBulanan" onclick="setModeSlip('bulanan')">📅 Slip Gaji Bulanan</button>
-            <button type="button" class="btn-secondary" id="btnMode12Bulan" onclick="setModeSlip('12bulan')">📆 Slip Gaji 12 Bulan</button>
+            <button type="button" class="btn-secondary" id="btnMode12Bulan" onclick="setModeSlip('12bulan')">📆 Slip Gaji Tahunan (Jan–Des)</button>
             <button type="button" class="btn-primary" onclick="window.print()">🖨️ Cetak / Print Slip Gaji</button>
             <button type="button" class="btn-secondary" onclick="pindahHalaman('hitung')">← Kembali ke Perhitungan</button>
           </div>
@@ -563,7 +653,7 @@
 
   <script>
     const SANDI_DEFAULT = "konoha2026";
-    const NAMA_BULAN = [
+    const BULAN_LIST = [
       "Januari", "Februari", "Maret", "April", "Mei", "Juni",
       "Juli", "Agustus", "September", "Oktober", "November", "Desember"
     ];
@@ -602,169 +692,115 @@
       "K/3": "TER C"
     };
 
-    // Tabel Tarif Efektif Bulanan (TER A, TER B, TER C) berdasarkan lapisan penghasilan bruto bulanan
-    const TER_BRACKETS = {
-      "TER A": [
-        { max: 5400000, rate: 0 },
-        { max: 5650000, rate: 0.0025 },
-        { max: 5950000, rate: 0.005 },
-        { max: 6300000, rate: 0.0075 },
-        { max: 6750000, rate: 0.01 },
-        { max: 7500000, rate: 0.0125 },
-        { max: 8550000, rate: 0.015 },
-        { max: 9650000, rate: 0.0175 },
-        { max: 10050000, rate: 0.02 },
-        { max: 10350000, rate: 0.0225 },
-        { max: 10700000, rate: 0.025 },
-        { max: 11050000, rate: 0.03 },
-        { max: 11600000, rate: 0.035 },
-        { max: 12500000, rate: 0.04 },
-        { max: 13750000, rate: 0.05 },
-        { max: 15100000, rate: 0.06 },
-        { max: 16950000, rate: 0.07 },
-        { max: 19750000, rate: 0.08 },
-        { max: 24150000, rate: 0.09 },
-        { max: 26450000, rate: 0.10 },
-        { max: 28000000, rate: 0.11 },
-        { max: 30050000, rate: 0.12 },
-        { max: 32400000, rate: 0.13 },
-        { max: 35400000, rate: 0.14 },
-        { max: 39100000, rate: 0.15 },
-        { max: 43850000, rate: 0.16 },
-        { max: 47800000, rate: 0.17 },
-        { max: 51400000, rate: 0.18 },
-        { max: 56300000, rate: 0.19 },
-        { max: 62200000, rate: 0.20 },
-        { max: 68600000, rate: 0.21 },
-        { max: 77500000, rate: 0.22 },
-        { max: 89000000, rate: 0.23 },
-        { max: 103000000, rate: 0.24 },
-        { max: 125000000, rate: 0.25 },
-        { max: 150000000, rate: 0.26 },
-        { max: 200000000, rate: 0.27 },
-        { max: 250000000, rate: 0.28 },
-        { max: 350000000, rate: 0.29 },
-        { max: 500000000, rate: 0.30 },
-        { max: 700000000, rate: 0.31 },
-        { max: 900000000, rate: 0.32 },
-        { max: 1400000000, rate: 0.33 },
-        { max: Infinity, rate: 0.34 }
-      ],
-      "TER B": [
-        { max: 6200000, rate: 0 },
-        { max: 6500000, rate: 0.0025 },
-        { max: 6850000, rate: 0.005 },
-        { max: 7300000, rate: 0.0075 },
-        { max: 9200000, rate: 0.01 },
-        { max: 10750000, rate: 0.015 },
-        { max: 11250000, rate: 0.02 },
-        { max: 11600000, rate: 0.025 },
-        { max: 12600000, rate: 0.03 },
-        { max: 13600000, rate: 0.04 },
-        { max: 14950000, rate: 0.05 },
-        { max: 16400000, rate: 0.06 },
-        { max: 18450000, rate: 0.07 },
-        { max: 21850000, rate: 0.08 },
-        { max: 26000000, rate: 0.09 },
-        { max: 27700000, rate: 0.10 },
-        { max: 29350000, rate: 0.11 },
-        { max: 31450000, rate: 0.12 },
-        { max: 33950000, rate: 0.13 },
-        { max: 37100000, rate: 0.14 },
-        { max: 41100000, rate: 0.15 },
-        { max: 45800000, rate: 0.16 },
-        { max: 49500000, rate: 0.17 },
-        { max: 53800000, rate: 0.18 },
-        { max: 58500000, rate: 0.19 },
-        { max: 64000000, rate: 0.20 },
-        { max: 70600000, rate: 0.21 },
-        { max: 78900000, rate: 0.22 },
-        { max: 90900000, rate: 0.23 },
-        { max: 106000000, rate: 0.24 },
-        { max: 129000000, rate: 0.25 },
-        { max: 155000000, rate: 0.26 },
-        { max: 205000000, rate: 0.27 },
-        { max: 255000000, rate: 0.28 },
-        { max: 355000000, rate: 0.29 },
-        { max: 505000000, rate: 0.30 },
-        { max: 705000000, rate: 0.31 },
-        { max: 905000000, rate: 0.32 },
-        { max: 1405000000, rate: 0.33 },
-        { max: Infinity, rate: 0.34 }
-      ],
-      "TER C": [
-        { max: 6600000, rate: 0 },
-        { max: 6950000, rate: 0.0025 },
-        { max: 7350000, rate: 0.005 },
-        { max: 7800000, rate: 0.0075 },
-        { max: 8850000, rate: 0.01 },
-        { max: 9800000, rate: 0.0125 },
-        { max: 10950000, rate: 0.015 },
-        { max: 12050000, rate: 0.02 },
-        { max: 12950000, rate: 0.025 },
-        { max: 14150000, rate: 0.03 },
-        { max: 15550000, rate: 0.04 },
-        { max: 17050000, rate: 0.05 },
-        { max: 19500000, rate: 0.06 },
-        { max: 22700000, rate: 0.07 },
-        { max: 26600000, rate: 0.08 },
-        { max: 28100000, rate: 0.09 },
-        { max: 30100000, rate: 0.10 },
-        { max: 32600000, rate: 0.11 },
-        { max: 35400000, rate: 0.12 },
-        { max: 38900000, rate: 0.13 },
-        { max: 43300000, rate: 0.14 },
-        { max: 46800000, rate: 0.15 },
-        { max: 51100000, rate: 0.16 },
-        { max: 56000000, rate: 0.17 },
-        { max: 61300000, rate: 0.18 },
-        { max: 67200000, rate: 0.19 },
-        { max: 73700000, rate: 0.20 },
-        { max: 81600000, rate: 0.21 },
-        { max: 93200000, rate: 0.22 },
-        { max: 108000000, rate: 0.23 },
-        { max: 131000000, rate: 0.24 },
-        { max: 157000000, rate: 0.25 },
-        { max: 207000000, rate: 0.26 },
-        { max: 257000000, rate: 0.27 },
-        { max: 357000000, rate: 0.28 },
-        { max: 507000000, rate: 0.29 },
-        { max: 707000000, rate: 0.30 },
-        { max: 907000000, rate: 0.31 },
-        { max: 1200000000, rate: 0.32 },
-        { max: 1419000000, rate: 0.33 },
-        { max: Infinity, rate: 0.34 }
-      ]
-    };
-
-    function getTarifTER(golonganTer, brutoBulanan) {
-      const brackets = TER_BRACKETS[golonganTer] || TER_BRACKETS["TER A"];
-      const bruto = Math.max(0, Number(brutoBulanan) || 0);
-      const found = brackets.find(b => bruto <= b.max);
-      return found ? found.rate : 0.34;
-    }
-
-    function formatPersenTER(rate) {
-      return (Number(rate || 0) * 100).toLocaleString("id-ID", {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2
-      }) + "%";
-    }
-
     let dataKaryawan = [
-      { id: 1, nama: "BUDI", status: "TK/2", ter: "TER B", bulan: 12, bulanTunjangan: 12, gapok: 6200002, tunjangan: 500091, thr: 6200001, brutoBln: 0, brutoThn: 0, biayaJab: 0, netoThn: 0, pkp: 0, tarifTer: 0, pphBulanan: 0, pphSetahun: 0, pphDes: 0 },
-      { id: 2, nama: "YOS", status: "TK/0", ter: "TER A", bulan: 12, bulanTunjangan: 12, gapok: 50000000, tunjangan: 0, thr: 50000000, brutoBln: 0, brutoThn: 0, biayaJab: 0, netoThn: 0, pkp: 0, tarifTer: 0, pphBulanan: 0, pphSetahun: 0, pphDes: 0 },
-      { id: 3, nama: "EDNI", status: "K/2", ter: "TER B", bulan: 12, bulanTunjangan: 12, gapok: 20000000, tunjangan: 0, thr: 20000000, brutoBln: 0, brutoThn: 0, biayaJab: 0, netoThn: 0, pkp: 0, tarifTer: 0, pphBulanan: 0, pphSetahun: 0, pphDes: 0 },
-      { id: 4, nama: "WAWA", status: "TK/2", ter: "TER B", bulan: 12, bulanTunjangan: 12, gapok: 32000000, tunjangan: 58, thr: 32000000, brutoBln: 0, brutoThn: 0, biayaJab: 0, netoThn: 0, pkp: 0, tarifTer: 0, pphBulanan: 0, pphSetahun: 0, pphDes: 0 },
-      { id: 5, nama: "HENNY", status: "K/0", ter: "TER A", bulan: 12, bulanTunjangan: 12, gapok: 40000000, tunjangan: 0, thr: 40000000, brutoBln: 0, brutoThn: 0, biayaJab: 0, netoThn: 0, pkp: 0, tarifTer: 0, pphBulanan: 0, pphSetahun: 0, pphDes: 0 },
-      { id: 6, nama: "EKA", status: "TK/1", ter: "TER A", bulan: 12, bulanTunjangan: 12, gapok: 5300000, tunjangan: 0, thr: 5300000, brutoBln: 0, brutoThn: 0, biayaJab: 0, netoThn: 0, pkp: 0, tarifTer: 0, pphBulanan: 0, pphSetahun: 0, pphDes: 0 },
-      { id: 7, nama: "KOMAR", status: "TK/2", ter: "TER B", bulan: 12, bulanTunjangan: 12, gapok: 5000000, tunjangan: 0, thr: 5299999, brutoBln: 0, brutoThn: 0, biayaJab: 0, netoThn: 0, pkp: 0, tarifTer: 0, pphBulanan: 0, pphSetahun: 0, pphDes: 0 }
+      {
+        id: 1, nama: "BUDI", status: "TK/2", ter: "TER B", bulan: 12,
+        gapok: 6200002, tunjangan: 500091, thr: 6200001,
+        tunjanganBulanan: [500001, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 0],
+        brutoBln: 7334973, brutoThn: 94219679, biayaJab: 4710984, netoThn: 86532695, pkp: 23532000, pphSetahun: 1176600, pphDes: 1176600
+      },
+      {
+        id: 2, nama: "YOS", status: "TK/0", ter: "TER A", bulan: 12,
+        gapok: 50000000, tunjangan: 0, thr: 50000000,
+        tunjanganBulanan: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        brutoBln: 55120000, brutoThn: 711440000, biayaJab: 6000000, netoThn: 681440000, pkp: 627440000, pphSetahun: 132232000, pphDes: 132232000
+      },
+      {
+        id: 3, nama: "EDNI", status: "K/2", ter: "TER B", bulan: 12,
+        gapok: 20000000, tunjangan: 0, thr: 20000000,
+        tunjanganBulanan: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        brutoBln: 22048000, brutoThn: 284576000, biayaJab: 6000000, netoThn: 268976000, pkp: 201476000, pphSetahun: 24221400, pphDes: 24221400
+      },
+      {
+        id: 4, nama: "WAWA", status: "TK/2", ter: "TER B", bulan: 12,
+        gapok: 32000000, tunjangan: 58, thr: 32000000,
+        tunjanganBulanan: [0, 2, 1, 2, 2, 11, 1, 12, 11, 0, 0, 0],
+        brutoBln: 35276858, brutoThn: 455322296, biayaJab: 6000000, netoThn: 433962296, pkp: 370962000, pphSetahun: 61740500, pphDes: 61740500
+      },
+      {
+        id: 5, nama: "HENNY", status: "K/0", ter: "TER A", bulan: 12,
+        gapok: 40000000, tunjangan: 0, thr: 40000000,
+        tunjanganBulanan: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        brutoBln: 44096000, brutoThn: 569152000, biayaJab: 6000000, netoThn: 543952000, pkp: 485452000, pphSetahun: 90363000, pphDes: 90363000
+      },
+      {
+        id: 6, nama: "EKA", status: "TK/1", ter: "TER A", bulan: 12,
+        gapok: 5300000, tunjangan: 0, thr: 5300000,
+        tunjanganBulanan: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        brutoBln: 5842720, brutoThn: 75412640, biayaJab: 3770632, netoThn: 69098008, pkp: 10598000, pphSetahun: 529900, pphDes: 529900
+      },
+      {
+        id: 7, nama: "KOMAR", status: "TK/2", ter: "TER B", bulan: 12,
+        gapok: 5000000, tunjangan: 0, thr: 5299999,
+        tunjanganBulanan: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        brutoBln: 5512000, brutoThn: 71443999, biayaJab: 3572200, netoThn: 65471799, pkp: 2471000, pphSetahun: 123550, pphDes: 123550
+      }
     ];
-
-    dataKaryawan.forEach(item => hitungUlangItem(item, true));
 
     let selectedSlipId = dataKaryawan[0].id;
     let modeSlip = "bulanan";
+
+    function normalisasiTunjanganBulanan(item) {
+      if (!Array.isArray(item.tunjanganBulanan) || item.tunjanganBulanan.length !== 12) {
+        const rata = Number(item.tunjangan) || 0;
+        item.tunjanganBulanan = Array(12).fill(rata);
+      } else {
+        item.tunjanganBulanan = item.tunjanganBulanan.map(n => Math.max(0, Number(n) || 0));
+      }
+      return item.tunjanganBulanan;
+    }
+    function totalTunjanganJanDes(item) {
+      return normalisasiTunjanganBulanan(item).reduce((sum, val) => sum + (Number(val) || 0), 0);
+    }
+
+    function updateTunjanganBulan(id, monthIdx, rawValue) {
+      const item = dataKaryawan.find(k => k.id === id);
+      if (!item) return;
+      const arr = normalisasiTunjanganBulanan(item);
+      arr[monthIdx] = parseAngka(rawValue);
+      item.tunjangan = Math.round(totalTunjanganJanDes(item) / 12);
+      hitungUlangItem(item, true);
+
+      renderTunjanganBulanTable();
+      renderDaftarTable();
+      renderHitungTable();
+      renderSlipDropdownAndPaper();
+    }
+
+    function renderTunjanganBulanTable() {
+      const tbody = document.getElementById("tunjanganBulanBody");
+      if (!tbody) return;
+
+      tbody.innerHTML = dataKaryawan.map(k => {
+        const arr = normalisasiTunjanganBulanan(k);
+        const totalThn = totalTunjanganJanDes(k);
+        return `
+          <tr>
+            <td style="border:1px solid #475569; background:#182030; color:#f8fafc; font-weight:700; padding:6px 8px;">${k.nama}</td>
+            ${arr.map((nominal, mIdx) => `
+              <td style="border:1px solid #475569; padding:5px 6px;">
+                <input type="number" value="${nominal}"
+                  style="width:100%; min-width:92px; padding:5px 7px; text-align:right; background:#0d1117; color:#f1f5f9; border:1px solid #334155; border-radius:4px;"
+                  onchange="updateTunjanganBulan(${k.id}, ${mIdx}, this.value)" />
+              </td>
+            `).join("")}
+            <td style="border:1px solid #475569; padding:6px 8px; text-align:right; font-weight:700; color:#fde047;">${formatRupiah(totalThn)}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function totalTunjanganJanDes(item) {
+      const arr = normalisasiTunjanganBulanan(item);
+      return arr.reduce((sum, val) => sum + (Number(val) || 0), 0);
+    }
+
+    function tunjanganBulanTertentu(item, namaBulan) {
+      const arr = normalisasiTunjanganBulanan(item);
+      const idx = BULAN_LIST.indexOf(namaBulan);
+      if (idx < 0) return arr[11] || 0;
+      return Number(arr[idx]) || 0;
+    }
 
     function formatRupiah(angka) {
       const num = Number(angka) || 0;
@@ -780,30 +816,16 @@
       return Math.max(0, parseInt(cleaned, 10) || 0);
     }
 
-    function hitungPphBulananPadaBulan(item, monthIndex) {
-      const bln = Math.max(1, Math.min(12, Number(item.bulan) || 12));
-      const blnTunj = Math.max(1, Math.min(12, Number(item.bulanTunjangan ?? bln) || bln));
-      if (monthIndex >= bln) {
-        return { bruto: 0, rate: 0, pph: 0 };
-      }
-      const tunjanganAktif = monthIndex < blnTunj ? item.tunjangan : 0;
-      const bruto = item.gapok + tunjanganAktif;
-      const rate = getTarifTER(item.ter, bruto);
-      const pph = Math.round(bruto * rate);
-      return { bruto, rate, pph };
-    }
-
     function hitungUlangItem(item, recomputeAll = false) {
       const ptkp = PTKP_MAP[item.status] || 54000000;
       const bln = Math.max(1, Math.min(12, Number(item.bulan) || 12));
-      const blnTunj = Math.max(1, Math.min(12, Number(item.bulanTunjangan ?? bln) || bln));
-      item.bulan = bln;
-      item.bulanTunjangan = blnTunj;
+      const totalTunj12 = totalTunjanganJanDes(item);
 
       if (recomputeAll) {
-        const brutoBulanDasar = item.gapok + (blnTunj > 0 ? item.tunjangan : 0);
-        item.brutoBln = brutoBulanDasar;
-        item.brutoThn = (item.gapok * bln) + (item.tunjangan * blnTunj) + item.thr;
+        const tunjRataBulan = Math.round(totalTunj12 / 12);
+        item.tunjangan = tunjRataBulan;
+        item.brutoBln = item.gapok + tunjRataBulan;
+        item.brutoThn = (item.gapok * bln) + totalTunj12 + item.thr;
         item.biayaJab = Math.min(6000000, Math.round(item.brutoThn * 0.05));
         const iuranPensiunEst = Math.round(item.gapok * 0.01 * bln);
         item.netoThn = Math.max(0, item.brutoThn - item.biayaJab - iuranPensiunEst);
@@ -826,19 +848,10 @@
         if (sisa > 0) pajak += sisa * 0.35;
 
         item.pphSetahun = Math.round(pajak);
-
-        const bulan1 = hitungPphBulananPadaBulan(item, 0);
-        item.tarifTer = bulan1.rate;
-        item.pphBulanan = bulan1.pph;
-
-        let akumulasiJanNov = 0;
-        for (let m = 0; m < 11; m++) {
-          akumulasiJanNov += hitungPphBulananPadaBulan(item, m).pph;
-        }
-        item.pphDes = Math.max(0, item.pphSetahun - akumulasiJanNov);
+        item.pphDes = Math.round(item.pphSetahun / bln);
       }
 
-      return { ...item, ptkp };
+      return { ...item, ptkp, totalTunj12 };
     }
 
     function prosesBukaSandi(e) {
@@ -869,7 +882,7 @@
     }
 
     function pindahHalaman(page) {
-      ["home", "daftar", "hitung", "slip"].forEach(p => {
+      ["home", "daftar", "tunjangan", "hitung", "slip"].forEach(p => {
         document.getElementById("page-" + p).classList.toggle("hidden", p !== page);
         const navBtn = document.getElementById("nav-" + p);
         if (navBtn) navBtn.classList.toggle("active", p === page);
@@ -891,23 +904,37 @@
         hitungUlangItem(item, true);
       } else if (field === "ter") {
         item.ter = rawValue;
-        hitungUlangItem(item, true);
       } else if (field === "bulan") {
         item.bulan = Math.max(1, Math.min(12, parseInt(rawValue, 10) || 12));
         hitungUlangItem(item, true);
-      } else if (field === "bulanTunjangan") {
-        item.bulanTunjangan = Math.max(1, Math.min(12, parseInt(rawValue, 10) || 12));
+      } else if (field === "tunjangan") {
+        const nominalBln = parseAngka(rawValue);
+        item.tunjanganBulanan = Array(12).fill(nominalBln);
         hitungUlangItem(item, true);
-      } else if (["gapok", "tunjangan", "thr"].includes(field)) {
+      } else if (["gapok", "thr"].includes(field)) {
         item[field] = parseAngka(rawValue);
         hitungUlangItem(item, true);
       }
 
+      renderTunjanganBulanTable();
       renderHitungTable();
       renderSlipDropdownAndPaper();
-      if (field === "status" || field === "bulan" || field === "bulanTunjangan") {
+      if (field === "status" || field === "bulan" || field === "tunjangan") {
         renderDaftarTable();
       }
+    }
+
+    function updateTunjanganBulan(id, monthIdx, rawValue) {
+      const item = dataKaryawan.find(k => k.id === id);
+      if (!item) return;
+      const arr = normalisasiTunjanganBulanan(item);
+      arr[monthIdx] = parseAngka(rawValue);
+      hitungUlangItem(item, true);
+
+      renderTunjanganBulanTable();
+      renderDaftarTable();
+      renderHitungTable();
+      renderSlipDropdownAndPaper();
     }
 
     function tambahKaryawan() {
@@ -918,17 +945,15 @@
         status: "TK/0",
         ter: "TER A",
         bulan: 12,
-        bulanTunjangan: 12,
         gapok: 6000000,
         tunjangan: 500000,
         thr: 6000000,
+        tunjanganBulanan: Array(12).fill(500000),
         brutoBln: 0,
         brutoThn: 0,
         biayaJab: 0,
         netoThn: 0,
         pkp: 0,
-        tarifTer: 0,
-        pphBulanan: 0,
         pphSetahun: 0,
         pphDes: 0
       };
@@ -981,10 +1006,6 @@
               onchange="updateField(${k.id}, 'bulan', this.value)" />
           </td>
           <td>
-            <input type="number" min="1" max="12" class="inline-input" style="width:74px;" value="${k.bulanTunjangan ?? 12}"
-              onchange="updateField(${k.id}, 'bulanTunjangan', this.value)" />
-          </td>
-          <td>
             <input type="number" class="inline-input num" value="${k.gapok}"
               onchange="updateField(${k.id}, 'gapok', this.value)" />
           </td>
@@ -1003,11 +1024,33 @@
       `).join("");
     }
 
+    function renderTunjanganBulanTable() {
+      const tbody = document.getElementById("tunjanganBulanBody");
+      if (!tbody) return;
+
+      tbody.innerHTML = dataKaryawan.map(k => {
+        const arr = normalisasiTunjanganBulanan(k);
+        const totalThn = totalTunjanganJanDes(k);
+        return `
+          <tr>
+            <td><strong style="color:var(--naruto-gold);">${k.nama}</strong></td>
+            ${arr.map((nominal, mIdx) => `
+              <td>
+                <input type="number" class="month-input num" value="${nominal}"
+                  onchange="updateTunjanganBulan(${k.id}, ${mIdx}, this.value)" />
+              </td>
+            `).join("")}
+            <td class="num"><strong>${formatRupiah(totalThn)}</strong></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
     function renderHitungTable() {
       const tbody = document.getElementById("hitungBody");
       tbody.innerHTML = dataKaryawan.map((k, idx) => {
         const ptkp = PTKP_MAP[k.status] || 54000000;
-        const blnTunj = k.bulanTunjangan ?? 12;
+        const totalTunj12 = totalTunjanganJanDes(k);
         return `
           <tr>
             <td>${idx + 1}</td>
@@ -1015,18 +1058,15 @@
             <td>${k.status}</td>
             <td class="num">${formatRupiah(ptkp)}</td>
             <td><span style="color:var(--naruto-gold); font-weight:700;">${k.ter}</span></td>
-            <td><strong>${formatPersenTER(k.tarifTer)}</strong></td>
             <td>${k.bulan}</td>
-            <td>${blnTunj}</td>
             <td class="num">${formatRupiah(k.gapok)}</td>
-            <td class="num">${formatRupiah(k.tunjangan)}</td>
+            <td class="num">${formatRupiah(totalTunj12)}</td>
             <td class="num">${formatRupiah(k.thr)}</td>
             <td class="num">${formatRupiah(k.brutoBln)}</td>
             <td class="num">${formatRupiah(k.brutoThn)}</td>
             <td class="num">${formatRupiah(k.biayaJab)}</td>
             <td class="num">${formatRupiah(k.netoThn)}</td>
             <td class="num">${formatRupiah(k.pkp)}</td>
-            <td class="num"><strong>${formatRupiah(k.pphBulanan)}</strong></td>
             <td class="num"><strong>${formatRupiah(k.pphSetahun)}</strong></td>
             <td class="num"><strong>${formatRupiah(k.pphDes)}</strong></td>
             <td>
@@ -1065,20 +1105,17 @@
 
       const bulanEl = document.getElementById("pilihBulanSlip");
       const namaBulan = bulanEl ? bulanEl.value : "Desember";
-      const monthIdx = Math.max(0, NAMA_BULAN.indexOf(namaBulan));
 
       const k = dataKaryawan.find(item => item.id === selectedSlipId) || dataKaryawan[0];
       if (!k) return;
 
       const ptkp = PTKP_MAP[k.status] || 54000000;
       const is12Bulan = modeSlip === "12bulan";
-      const blnTunj = k.bulanTunjangan ?? 12;
 
       if (!is12Bulan) {
-        const tunjanganBulanIni = monthIdx < blnTunj ? k.tunjangan : 0;
+        const tunjanganBulanIni = tunjanganBulanTertentu(k, namaBulan);
         const totalPendapatanBulanan = k.gapok + tunjanganBulanIni;
-        const infoBulan = hitungPphBulananPadaBulan(k, monthIdx);
-        const potonganPphBulanan = namaBulan === "Desember" ? k.pphDes : infoBulan.pph;
+        const potonganPphBulanan = Math.round(k.pphSetahun / (k.bulan || 12));
         const gajiBersihBulanan = Math.max(0, totalPendapatanBulanan - potonganPphBulanan);
 
         document.getElementById("slipPaper").innerHTML = `
@@ -1088,7 +1125,7 @@
               <div style="font-size:0.85rem; color:#4b5563;">Sistem Administrasi Konoha • Periode Bulan: ${namaBulan}</div>
             </div>
             <div style="text-align:right;">
-              <strong style="color:#c2410c;">GOLONGAN: ${k.ter} (${formatPersenTER(infoBulan.rate)})</strong><br/>
+              <strong style="color:#c2410c;">GOLONGAN: ${k.ter}</strong><br/>
               <span style="font-size:0.85rem; color:#4b5563;">Status PTKP: ${k.status}</span>
             </div>
           </div>
@@ -1121,7 +1158,7 @@
                 <td style="text-align:right;"><strong>${formatRupiah(totalPendapatanBulanan)}</strong></td>
               </tr>
               <tr>
-                <td>Potongan PPh 21 (${namaBulan}${namaBulan === "Desember" ? " - Rekonsiliasi" : " - " + k.ter})</td>
+                <td>Potongan PPh 21 (${namaBulan})</td>
                 <td style="text-align:right; color:#b91c1c;">- ${formatRupiah(potonganPphBulanan)}</td>
               </tr>
               <tr class="slip-total">
@@ -1145,16 +1182,16 @@
         return;
       }
 
-      const gapok12 = k.gapok * 12;
-      const tunjangan12 = k.tunjangan * blnTunj;
+      const gapok12 = k.gapok * (k.bulan || 12);
+      const tunjangan12 = totalTunjanganJanDes(k);
       const totalBruto12 = gapok12 + tunjangan12 + k.thr;
       const gajiBersih12 = Math.max(0, totalBruto12 - k.pphSetahun);
 
       document.getElementById("slipPaper").innerHTML = `
         <div class="slip-header">
           <div>
-            <h2>SLIP GAJI 12 BULAN & PPh 21 TAHUNAN</h2>
-            <div style="font-size:0.85rem; color:#4b5563;">Sistem Administrasi Konoha • Rekap 12 Bulan (s.d. ${namaBulan})</div>
+            <h2>SLIP GAJI TAHUNAN (JANUARI – DESEMBER) & PPh 21</h2>
+            <div style="font-size:0.85rem; color:#4b5563;">Sistem Administrasi Konoha • Rekap Tahunan (Januari – Desember)</div>
           </div>
           <div style="text-align:right;">
             <strong style="color:#c2410c;">GOLONGAN: ${k.ter}</strong><br/>
@@ -1165,40 +1202,40 @@
         <div class="slip-meta">
           <div><strong>Nama Karyawan:</strong> ${k.nama}</div>
           <div><strong>PTKP Tahunan:</strong> ${formatRupiah(ptkp)}</div>
-          <div><strong>Periode Slip:</strong> 12 Bulan (s.d. ${namaBulan})</div>
+          <div><strong>Periode Slip:</strong> Tahunan (Januari – Desember)</div>
           <div><strong>PKP:</strong> ${formatRupiah(k.pkp)}</div>
         </div>
 
         <table class="slip-table">
           <thead>
             <tr>
-              <th>Uraian Komponen (12 Bulan)</th>
+              <th>Uraian Komponen Tahunan (Januari – Desember)</th>
               <th style="text-align:right;">Nominal (Rupiah)</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>Gaji Pokok (12 Bulan)</td>
+              <td>Gaji Pokok (${k.bulan || 12} Bulan)</td>
               <td style="text-align:right;">${formatRupiah(gapok12)}</td>
             </tr>
             <tr>
-              <td>Tunjangan (${blnTunj} Bulan / 12 Bulan)</td>
+              <td>Total Tunjangan (Januari – Desember)</td>
               <td style="text-align:right;">${formatRupiah(tunjangan12)}</td>
             </tr>
             <tr>
-              <td>THR</td>
+              <td>THR Tahunan</td>
               <td style="text-align:right;">${formatRupiah(k.thr)}</td>
             </tr>
             <tr>
-              <td><strong>Total Pendapatan 12 Bulan</strong></td>
+              <td><strong>Total Pendapatan Tahunan</strong></td>
               <td style="text-align:right;"><strong>${formatRupiah(totalBruto12)}</strong></td>
             </tr>
             <tr>
-              <td>Potongan PPh 21 (12 Bulan / Setahun)</td>
+              <td>Potongan PPh 21 Setahun</td>
               <td style="text-align:right; color:#b91c1c;">- ${formatRupiah(k.pphSetahun)}</td>
             </tr>
             <tr class="slip-total">
-              <td>Gaji Bersih Diterima (12 Bulan)</td>
+              <td>Gaji Bersih Diterima (Tahunan)</td>
               <td style="text-align:right;">${formatRupiah(gajiBersih12)}</td>
             </tr>
           </tbody>
@@ -1219,6 +1256,7 @@
 
     function renderSemua() {
       renderDaftarTable();
+      renderTunjanganBulanTable();
       renderHitungTable();
       renderSlipDropdownAndPaper();
     }
