@@ -439,8 +439,50 @@
           </div>
         </div>
       </section>
+      
 
       <!-- 2. MENU DAFTAR -->
+      <!-- MENU DAFTAR TUNJANGAN (JANUARI - DESEMBER) -->
+      <section id="page-tunjangan" class="hidden">
+        <div class="card">
+          <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; margin-bottom:16px;">
+            <div>
+              <h2 style="color: var(--naruto-gold);">💼 Daftar Tunjangan (Januari – Desember)</h2>
+              <p style="color: var(--text-muted); font-size:0.88rem;">
+                Isi nominal tunjangan bulanan <strong>JANUARI</strong> sampai <strong>DESEMBER</strong> per karyawan.
+              </p>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button type="button" class="btn-secondary" onclick="pindahHalaman('daftar')">← Kembali ke Daftar</button>
+              <button type="button" class="btn-primary" onclick="pindahHalaman('slip')">Buka Slip Gaji →</button>
+            </div>
+          </div>
+
+          <div style="overflow-x:auto; border:2px solid #eab308; border-radius:6px; background:#121620;">
+            <table style="width:100%; border-collapse:collapse; font-size:0.84rem; white-space:nowrap;">
+              <thead>
+                <tr>
+                  <th style="border:1px solid #475569; background:#1e293b; color:#ff4d4d; padding:8px; text-align:left;">NAMA</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">JANUARI</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">FEBUARI</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">MARET</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">APRIL</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">MEI</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">JUNI</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">JULI</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">AGUSTUS</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">SEPTEMBER</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">OKTOBER</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">NOVEMBER</th>
+                  <th style="border:1px solid #475569; background:#facc15; color:#111827; padding:8px; text-align:center;">DESEMBER</th>
+                  <th style="border:1px solid #475569; background:#f59e0b; color:#111827; padding:8px; text-align:right;">TOTAL JAN–DES</th>
+                </tr>
+              </thead>
+              <tbody id="tunjanganBulanBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
       <section id="page-daftar" class="hidden">
         <div class="card">
           <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; margin-bottom:16px;">
