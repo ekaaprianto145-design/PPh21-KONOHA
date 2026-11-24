@@ -468,42 +468,6 @@
   }
 }
 
-    @media (max-width: 640px) {
-  .container {
-    padding: 0 10px 32px;
-  }
-
-  .card {
-    padding: 14px;
-  }
-
-  .slip-paper {
-    padding: 12px;
-    max-width: 100%;
-    overflow-x: auto;
-  }
-
-  .slip-meta-box,
-  .slip-table {
-    font-size: 0.74rem;
-    table-layout: fixed;
-    width: 100%;
-  }
-
-  .slip-table th,
-  .slip-table td {
-    padding: 5px 6px;
-    white-space: normal;
-    word-break: break-word;
-    overflow-wrap: anywhere;
-  }
-
- .slip-footer {
-    gap: 12px;
-    font-size: 0.78rem;
-  }
-}
-
     @media print {
       body {
         background: #fff !important;
@@ -728,6 +692,7 @@
       <section id="page-slip" class="hidden">
         <div class="card">
           <div class="slip-controls no-print">
+            <button type="button" class="btn-success" onclick="kirimSlipKePortal()">📤 Kirim ke Portal Slip Gaji</button>
             <label for="pilihKaryawanSlip" style="font-weight:600;">Pilih Karyawan:</label>
             <select id="pilihKaryawanSlip" style="max-width: 260px;" onchange="renderSlipGaji()"></select>
 
@@ -1812,7 +1777,32 @@
         </div>
       `;
     }
+     const PORTAL_SLIPS_KEY = "konoha_portal_slips_v1";
+    const portalChannel = new BroadcastChannel("konoha_pph21_channel");
 
+    function kirimSlipKePortal() {
+      const semuaSlip = JSON.parse(localStorage.getItem(PORTAL_SLIPS_KEY) || "{}");
+
+      dataKaryawan.forEach((raw) => {
+        const namaKey = String(raw.nama || "").trim().toUpperCase();
+        if (!namaKey) return;
+
+        const perBulan = {};
+        BULAN_OPTIONS.forEach((blnLabel) => {
+          perBulan[blnLabel] = hitungItem(raw, blnLabel);
+        });
+
+        semuaSlip[namaKey] = {
+          updatedAt: new Date().toLocaleString("id-ID"),
+          bulanan: perBulan,
+          tahunan: hitungItem(raw, "DESEMBER")
+        };
+      });
+
+      localStorage.setItem(PORTAL_SLIPS_KEY, JSON.stringify(semuaSlip));
+      portalChannel.postMessage({ type: "SLIP_UPDATED" });
+      alert("Semua slip gaji (bulanan & 12 bulan) berhasil dikirim ke Portal Slip Gaji!");
+    }
     function renderSemua() {
       renderDaftarTable();
       renderTabelTunjanganBulanan(false);
