@@ -1105,38 +1105,30 @@
       const gapok = Number(item.gapok) || 0;
       const thrMaster = Number(item.thr) || 0;
 
-      // Dasar BPJS mengikuti gaji pokok (dibulatkan ke kelipatan 100.000 seperti 6.200.001 -> 6.200.000)
       const dasarBpjs = Math.floor(gapok / 100000) * 100000;
 
-      // Iuran BPJS Karyawan (1%, 2%, 1%)
       const bpjsKesKryBln = Math.round(dasarBpjs * 0.01);
       const jhtKryBln = Math.round(dasarBpjs * 0.02);
       const jpKryBln = Math.round(dasarBpjs * 0.01);
 
-      // Tunjangan BPJS Perusahaan (Kes 4%, JHT 3,7%, JP 2%)
       const bpjsKesPtBln = Math.round(dasarBpjs * 0.04);
       const jhtPtBln = Math.round(dasarBpjs * 0.037);
       const jpPtBln = Math.round(dasarBpjs * 0.02);
       const totalBpjsPtBln = bpjsKesPtBln + jhtPtBln + jpPtBln;
 
-      // Tunjangan per bulan (Januari - Desember) & Desember
       const totalTunjanganThn = getTotalTunjangan12Bulan(item);
       const tunjanganBlnDipilih = getTunjanganBulan(item, labelBulanAktif);
       const tunjanganDesember = Number(item.tunjanganBulanan?.desember) || 0;
 
-      // THR di bulan aktif: hanya terhitung jika bulan aktif sama dengan bulanThr
       const thrBulanDipilih = getThrBulan(item, labelBulanAktif);
 
-      // Bruto Bulanan (Gaji Pokok + THR Bulan Dipilih + Tunjangan Bulan Aktif)
       const brutoBulanan = gapok + thrBulanDipilih + tunjanganBlnDipilih;
       const tarifTer = cariTarifTER(item.ter, brutoBulanan);
       const pphBulanan = Math.round(brutoBulanan * tarifTer);
 
-      // Potongan karyawan bulanan & THP bulanan
       const totalPotonganBulanan = pphBulanan;
       const takeHomePayBulanan = Math.max(0, brutoBulanan - totalPotonganBulanan);
 
-      // Hitung PPh 21 dari bulan Januari sampai November (indeks 0..10)
       const pphJanNovList = BULAN_OPTIONS.slice(0, 11).map((labelBln, idx) => {
         const bKey = BULAN_KEYS[idx];
         const tunjBln = Number(item.tunjanganBulanan?.[bKey]) || 0;
@@ -1147,35 +1139,21 @@
       });
       const totalPphJanNov = pphJanNovList.reduce((acc, v) => acc + v, 0);
 
-      // Perhitungan 12 Bulan / Setahun (selalu 12 bulan):
       const gapokSetahun = gapok * blnSetahun;
       const bpjsKesPtSetahun = bpjsKesPtBln * blnSetahun;
       const jhtPtSetahun = jhtPtBln * blnSetahun;
       const jpPtSetahun = jpPtBln * blnSetahun;
 
-      // 1. Pendapatan pokok + BPJS PT setahun (12 bulan)
       const pendapatanPokokBpjsThn = gapokSetahun + bpjsKesPtSetahun + jhtPtSetahun + jpPtSetahun;
       const totalPendapatanSetahun = pendapatanPokokBpjsThn + totalTunjanganThn + thrMaster;
 
-      // 2. Biaya jabatan = 5% * Pendapatan Pokok & BPJS PT setahun (maks. Rp6.000.000)
       const biayaJab = Math.min(6000000, Math.round(pendapatanPokokBpjsThn * 0.05));
-
-      // 3. Penghasilan neto setahun = Pendapatan Pokok & BPJS PT setahun - Biaya jabatan
       const netoThn = Math.max(0, pendapatanPokokBpjsThn - biayaJab);
-
-      // 4. Penghasilan kena pajak (PKP) = Neto Setahun - PTKP (dibulatkan ke ribuan ke bawah)
       const pkp = Math.max(0, Math.floor((netoThn - ptkp) / 1000) * 1000);
-
-      // 5. PPh 21 setahun dari PKP
       const pphSetahun = hitungTarifProgresif(pkp);
 
-      // Selisih: PPh 21 Setahun - PPh 21 (Jan-Nov)
       const selisihPphSetahunMinusJanNov = pphSetahun - totalPphJanNov;
-
-      // Penerimaan dasar Desember (Gaji sebulan + THR + Tunjangan bulan Desember)
       const penerimaanDesember = gapok + thrMaster + tunjanganDesember;
-
-      // Take Home Pay = Gaji sebulan + THR + Tunjangan bulan Desember - (PPh 21 setahun - PPh 21 Jan-Nov)
       const thp12Bulan = penerimaanDesember - selisihPphSetahunMinusJanNov;
 
       return {
@@ -1784,9 +1762,8 @@
     const PORTAL_SLIPS_KEY = "konoha_portal_slips_v1";
 
     function bangunPayloadPortal(tanggalKirim, waktuKirim, bulanDipilih) {
-      const semuaSlip = {};
+      const slips = {};
       const daftarNama = [];
-      const karyawanList = [];
 
       dataKaryawan.forEach((raw) => {
         const namaKey = String(raw.nama || "").trim().toUpperCase();
@@ -1794,37 +1771,11 @@
 
         daftarNama.push(namaKey);
 
-        const perBulan = {};
-        BULAN_OPTIONS.forEach((blnLabel) => {
-          perBulan[blnLabel] = {
-            ...hitungItem(raw, blnLabel),
-            tanggalKirim,
-            waktuKirim,
-            periodeBulan: blnLabel
-          };
-        });
+        const blnCalc = hitungItem(raw, bulanDipilih);
+        const thnCalc = hitungItem(raw, "DESEMBER");
+        const tunjanganArr = BULAN_KEYS.map(b => Number(raw.tunjanganBulanan?.[b]) || 0);
 
-        const slipTahunan = {
-          ...hitungItem(raw, "DESEMBER"),
-          tanggalKirim,
-          waktuKirim
-        };
-
-        semuaSlip[namaKey] = {
-          nama: namaKey,
-          jabatan: raw.jabatan || "staff",
-          status: raw.status,
-          ter: raw.ter,
-          updatedAt: `${tanggalKirim} ${waktuKirim}`,
-          tanggalKirim,
-          waktuKirim,
-          periodeTerakhir: bulanDipilih,
-          bulanan: perBulan,
-          tahunan: slipTahunan
-        };
-
-        karyawanList.push({
-          id: raw.id,
+        slips[namaKey] = {
           nama: namaKey,
           jabatan: raw.jabatan || "staff",
           status: raw.status,
@@ -1832,14 +1783,47 @@
           gapok: Number(raw.gapok) || 0,
           thr: Number(raw.thr) || 0,
           bulanThr: raw.bulanThr || "TIDAK ADA",
-          tunjanganBulanan: { ...raw.tunjanganBulanan }
-        });
+          tunjanganBulanan: tunjanganArr,
+          periodeBulan: bulanDipilih,
+          tanggalKirim,
+          waktuKirim,
+          bulanan: {
+            gapok: blnCalc.gapok,
+            tunjangan: blnCalc.tunjanganBlnDipilih,
+            thr: blnCalc.thrBulanDipilih,
+            bruto: blnCalc.brutoBulanan,
+            tarifTer: blnCalc.tarifTer,
+            pph21: blnCalc.pphBulanan,
+            thp: blnCalc.takeHomePayBulanan,
+            bpjsKry: {
+              kes: blnCalc.bpjsKesKryBln,
+              jht: blnCalc.jhtKryBln,
+              jp: blnCalc.jpKryBln
+            },
+            bpjsPt: {
+              kes: blnCalc.bpjsKesPtBln,
+              jht: blnCalc.jhtPtBln,
+              jp: blnCalc.jpPtBln
+            }
+          },
+          tahunan: {
+            pendapatanPokokBpjsThn: thnCalc.pendapatanPokokBpjsThn,
+            totalTunjanganThn: thnCalc.totalTunjanganThn,
+            biayaJab: thnCalc.biayaJab,
+            netoThn: thnCalc.netoThn,
+            ptkp: thnCalc.ptkp,
+            pkp: thnCalc.pkp,
+            pphSetahun: thnCalc.pphSetahun,
+            totalPphJanNov: thnCalc.totalPphJanNov,
+            selisihPph: thnCalc.selisihPphSetahunMinusJanNov,
+            thp12Bulan: thnCalc.thp12Bulan
+          }
+        };
       });
 
       return {
-        slips: semuaSlip,
+        slips,
         daftarNama,
-        karyawanList,
         lastSentAt: `${tanggalKirim} ${waktuKirim}`
       };
     }
@@ -1906,7 +1890,6 @@
       const payload = bangunPayloadPortal(tanggalKirim, waktuKirim, bulanDipilih);
       delete payload.slips[namaKey];
       payload.daftarNama = payload.daftarNama.filter(n => n !== namaKey);
-      payload.karyawanList = payload.karyawanList.filter(k => k.nama !== namaKey);
 
       localStorage.setItem(PORTAL_SLIPS_KEY, JSON.stringify(payload.slips));
 
@@ -1917,10 +1900,7 @@
             "Content-Type": "application/json",
             "X-Master-Key": JSONBIN_API_KEY
           },
-          body: JSON.stringify({
-            ...payload,
-            lastUpdatedAt: new Date().toLocaleString("id-ID")
-          })
+          body: JSON.stringify(payload)
         });
 
         const teksRespon = await res.text();
