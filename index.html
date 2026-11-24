@@ -432,6 +432,41 @@
     .hidden {
       display: none !important;
     }
+    @media (max-width: 640px) {
+  .container {
+    padding: 0 10px 32px;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  .slip-paper {
+    padding: 12px;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .slip-meta-box,
+  .slip-table {
+    font-size: 0.74rem;
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .slip-table th,
+  .slip-table td {
+    padding: 5px 6px;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .slip-footer {
+    gap: 12px;
+    font-size: 0.78rem;
+  }
+}
 
     @media (max-width: 640px) {
   .container {
