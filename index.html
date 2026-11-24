@@ -1783,17 +1783,8 @@
     const JSONBIN_API_KEY = "$2a$10$445Fc4XldKJrwz.kIfmZ9egiauM0Urvr7Kw2S2jNcfsyZvtMQ4lTi";
     const PORTAL_SLIPS_KEY = "konoha_portal_slips_v1";
 
-    function bacaSemuaSlipLokal() {
-      try {
-        const parsed = JSON.parse(localStorage.getItem(PORTAL_SLIPS_KEY) || "{}");
-        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-          return parsed;
-        }
-      } catch (e) {}
-      return {};
-    }
-
-    function bangunPayloadPortal(semuaSlip, tanggalKirim, waktuKirim, bulanDipilih) {
+    function bangunPayloadPortal(tanggalKirim, waktuKirim, bulanDipilih) {
+      const semuaSlip = {};
       const daftarNama = [];
       const karyawanList = [];
 
@@ -1866,9 +1857,7 @@
       });
       const bulanDipilih = document.getElementById("pilihBulanSlip")?.value || "JANUARI";
 
-      const semuaSlip = bacaSemuaSlipLokal();
-      const payload = bangunPayloadPortal(semuaSlip, tanggalKirim, waktuKirim, bulanDipilih);
-
+      const payload = bangunPayloadPortal(tanggalKirim, waktuKirim, bulanDipilih);
       localStorage.setItem(PORTAL_SLIPS_KEY, JSON.stringify(payload.slips));
 
       try {
@@ -1881,11 +1870,14 @@
           body: JSON.stringify(payload)
         });
 
-        if (!res.ok) throw new Error("Gagal update bin");
+        const teksRespon = await res.text();
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${teksRespon}`);
+        }
         alert(`Slip gaji & daftar karyawan (${payload.daftarNama.join(", ")}) berhasil dikirim ke Portal!`);
       } catch (err) {
         console.error(err);
-        alert("Tersimpan lokal, namun gagal kirim ke JSONBin. Periksa koneksi/API Key.");
+        alert(`Tersimpan lokal, namun gagal kirim ke JSONBin.\nDetail: ${err.message}`);
       }
     }
 
@@ -1911,11 +1903,10 @@
       });
       const bulanDipilih = document.getElementById("pilihBulanSlip")?.value || "JANUARI";
 
-      const semuaSlip = bacaSemuaSlipLokal();
-      delete semuaSlip[namaKey];
-      const payload = bangunPayloadPortal(semuaSlip, tanggalKirim, waktuKirim, bulanDipilih);
+      const payload = bangunPayloadPortal(tanggalKirim, waktuKirim, bulanDipilih);
       delete payload.slips[namaKey];
       payload.daftarNama = payload.daftarNama.filter(n => n !== namaKey);
+      payload.karyawanList = payload.karyawanList.filter(k => k.nama !== namaKey);
 
       localStorage.setItem(PORTAL_SLIPS_KEY, JSON.stringify(payload.slips));
 
@@ -1932,11 +1923,14 @@
           })
         });
 
-        if (!res.ok) throw new Error("Gagal menghapus slip di JSONBin");
+        const teksRespon = await res.text();
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${teksRespon}`);
+        }
         alert(`Slip gaji "${namaKey}" berhasil dihapus dari Portal!`);
       } catch (err) {
         console.error(err);
-        alert("Terhapus di penyimpanan lokal, namun gagal memperbarui JSONBin.");
+        alert(`Terhapus di penyimpanan lokal, namun gagal memperbarui JSONBin.\nDetail: ${err.message}`);
       }
     }
 
