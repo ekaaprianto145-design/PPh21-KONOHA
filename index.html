@@ -1783,6 +1783,76 @@
     const JSONBIN_API_KEY = "$2a$10$445Fc4XldKJrwz.kIfmZ9egiauM0Urvr7Kw2S2jNcfsyZvtMQ4lTi";
     const PORTAL_SLIPS_KEY = "konoha_portal_slips_v1";
 
+    function bacaSemuaSlipLokal() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(PORTAL_SLIPS_KEY) || "{}");
+        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+          return parsed;
+        }
+      } catch (e) {}
+      return {};
+    }
+
+    function bangunPayloadPortal(semuaSlip, tanggalKirim, waktuKirim, bulanDipilih) {
+      const daftarNama = [];
+      const karyawanList = [];
+
+      dataKaryawan.forEach((raw) => {
+        const namaKey = String(raw.nama || "").trim().toUpperCase();
+        if (!namaKey) return;
+
+        daftarNama.push(namaKey);
+
+        const perBulan = {};
+        BULAN_OPTIONS.forEach((blnLabel) => {
+          perBulan[blnLabel] = {
+            ...hitungItem(raw, blnLabel),
+            tanggalKirim,
+            waktuKirim,
+            periodeBulan: blnLabel
+          };
+        });
+
+        const slipTahunan = {
+          ...hitungItem(raw, "DESEMBER"),
+          tanggalKirim,
+          waktuKirim
+        };
+
+        semuaSlip[namaKey] = {
+          nama: namaKey,
+          jabatan: raw.jabatan || "staff",
+          status: raw.status,
+          ter: raw.ter,
+          updatedAt: `${tanggalKirim} ${waktuKirim}`,
+          tanggalKirim,
+          waktuKirim,
+          periodeTerakhir: bulanDipilih,
+          bulanan: perBulan,
+          tahunan: slipTahunan
+        };
+
+        karyawanList.push({
+          id: raw.id,
+          nama: namaKey,
+          jabatan: raw.jabatan || "staff",
+          status: raw.status,
+          ter: raw.ter,
+          gapok: Number(raw.gapok) || 0,
+          thr: Number(raw.thr) || 0,
+          bulanThr: raw.bulanThr || "TIDAK ADA",
+          tunjanganBulanan: { ...raw.tunjanganBulanan }
+        });
+      });
+
+      return {
+        slips: semuaSlip,
+        daftarNama,
+        karyawanList,
+        lastSentAt: `${tanggalKirim} ${waktuKirim}`
+      };
+    }
+
     async function kirimSlipKePortal() {
       const sekarang = new Date();
       const tanggalKirim = sekarang.toLocaleDateString("id-ID", {
@@ -1796,37 +1866,10 @@
       });
       const bulanDipilih = document.getElementById("pilihBulanSlip")?.value || "JANUARI";
 
-      const semuaSlip = JSON.parse(localStorage.getItem(PORTAL_SLIPS_KEY) || "{}");
+      const semuaSlip = bacaSemuaSlipLokal();
+      const payload = bangunPayloadPortal(semuaSlip, tanggalKirim, waktuKirim, bulanDipilih);
 
-      dataKaryawan.forEach((raw) => {
-        const namaKey = String(raw.nama || "").trim().toUpperCase();
-        if (!namaKey) return;
-
-        const perBulan = {};
-        BULAN_OPTIONS.forEach((blnLabel) => {
-          perBulan[blnLabel] = {
-            ...hitungItem(raw, blnLabel),
-            tanggalKirim,
-            waktuKirim,
-            periodeBulan: blnLabel
-          };
-        });
-
-        semuaSlip[namaKey] = {
-          updatedAt: `${tanggalKirim} ${waktuKirim}`,
-          tanggalKirim,
-          waktuKirim,
-          periodeTerakhir: bulanDipilih,
-          bulanan: perBulan,
-          tahunan: {
-            ...hitungItem(raw, "DESEMBER"),
-            tanggalKirim,
-            waktuKirim
-          }
-        };
-      });
-
-      localStorage.setItem(PORTAL_SLIPS_KEY, JSON.stringify(semuaSlip));
+      localStorage.setItem(PORTAL_SLIPS_KEY, JSON.stringify(payload.slips));
 
       try {
         const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
@@ -1835,14 +1878,11 @@
             "Content-Type": "application/json",
             "X-Master-Key": JSONBIN_API_KEY
           },
-          body: JSON.stringify({
-            slips: semuaSlip,
-            lastSentAt: `${tanggalKirim} ${waktuKirim}`
-          })
+          body: JSON.stringify(payload)
         });
 
         if (!res.ok) throw new Error("Gagal update bin");
-        alert(`Slip gaji berhasil dikirim (${tanggalKirim} • ${waktuKirim}) ke Portal!`);
+        alert(`Slip gaji & daftar karyawan (${payload.daftarNama.join(", ")}) berhasil dikirim ke Portal!`);
       } catch (err) {
         console.error(err);
         alert("Tersimpan lokal, namun gagal kirim ke JSONBin. Periksa koneksi/API Key.");
@@ -1859,9 +1899,25 @@
       const yakin = confirm(`Hapus slip gaji "${namaKey}" dari Portal Slip Gaji?`);
       if (!yakin) return;
 
-      const semuaSlip = JSON.parse(localStorage.getItem(PORTAL_SLIPS_KEY) || "{}");
+      const sekarang = new Date();
+      const tanggalKirim = sekarang.toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+      });
+      const waktuKirim = sekarang.toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+      const bulanDipilih = document.getElementById("pilihBulanSlip")?.value || "JANUARI";
+
+      const semuaSlip = bacaSemuaSlipLokal();
       delete semuaSlip[namaKey];
-      localStorage.setItem(PORTAL_SLIPS_KEY, JSON.stringify(semuaSlip));
+      const payload = bangunPayloadPortal(semuaSlip, tanggalKirim, waktuKirim, bulanDipilih);
+      delete payload.slips[namaKey];
+      payload.daftarNama = payload.daftarNama.filter(n => n !== namaKey);
+
+      localStorage.setItem(PORTAL_SLIPS_KEY, JSON.stringify(payload.slips));
 
       try {
         const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
@@ -1871,7 +1927,7 @@
             "X-Master-Key": JSONBIN_API_KEY
           },
           body: JSON.stringify({
-            slips: semuaSlip,
+            ...payload,
             lastUpdatedAt: new Date().toLocaleString("id-ID")
           })
         });
