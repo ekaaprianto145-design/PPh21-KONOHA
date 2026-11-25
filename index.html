@@ -6,9 +6,9 @@
   <title>Sistem PPh 21 Konoha</title>
   <style>
     :root {
-      --bg-dark: #0f1117;
-      --bg-card: #181c26;
-      --bg-card-2: #202634;
+      --bg-dark: #090706;
+      --bg-card: rgba(24, 28, 38, 0.9);
+      --bg-card-2: rgba(32, 38, 52, 0.92);
       --naruto-orange: #ff6b00;
       --naruto-orange-glow: rgba(255, 107, 0, 0.35);
       --naruto-gold: #ffb703;
@@ -27,9 +27,72 @@
     }
 
     body {
-      background: radial-gradient(circle at top, #1f1916 0%, var(--bg-dark) 60%);
+      background: var(--bg-dark);
       color: var(--text-main);
       min-height: 100vh;
+    }
+
+    /* --- BACKGROUND ANIMASI CHAKRA --- */
+    .chakra-bg-wrap {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      background: radial-gradient(circle at 22% 48%, #3b1200 0%, #140803 45%, #060507 100%);
+    }
+
+    #chakraBgCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .chakra-core-glow {
+      position: absolute;
+      top: 22%;
+      left: 14%;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(255, 248, 210, 0.75) 0%,
+        rgba(255, 174, 19, 0.45) 28%,
+        rgba(255, 77, 0, 0.18) 58%,
+        rgba(255, 60, 0, 0) 75%
+      );
+      filter: blur(26px);
+      animation: chakraPulse 4.5s ease-in-out infinite alternate;
+    }
+
+    .chakra-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, transparent 48%, rgba(0, 0, 0, 0.72) 100%);
+    }
+
+    @keyframes chakraPulse {
+      0% {
+        transform: scale(0.92) translate(0px, 0px);
+        opacity: 0.82;
+      }
+      50% {
+        transform: scale(1.08) translate(14px, -10px);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(0.98) translate(-8px, 8px);
+        opacity: 0.88;
+      }
+    }
+
+    .lock-screen,
+    #appShell {
+      position: relative;
+      z-index: 1;
     }
 
     .topbar {
@@ -432,44 +495,45 @@
     .hidden {
       display: none !important;
     }
+
     @media (max-width: 640px) {
-  .container {
-    padding: 0 10px 32px;
-  }
+      .container {
+        padding: 0 10px 32px;
+      }
 
-  .card {
-    padding: 14px;
-  }
+      .card {
+        padding: 14px;
+      }
 
-  .slip-paper {
-    padding: 12px;
-    max-width: 100%;
-    overflow-x: auto;
-  }
+      .slip-paper {
+        padding: 12px;
+        max-width: 100%;
+        overflow-x: auto;
+      }
 
-  .slip-meta-box,
-  .slip-table {
-    font-size: 0.74rem;
-    table-layout: fixed;
-    width: 100%;
-  }
+      .slip-meta-box,
+      .slip-table {
+        font-size: 0.74rem;
+        table-layout: fixed;
+        width: 100%;
+      }
 
-  .slip-table th,
-  .slip-table td {
-    padding: 5px 6px;
-    white-space: normal;
-    word-break: break-word;
-    overflow-wrap: anywhere;
-  }
+      .slip-table th,
+      .slip-table td {
+        padding: 5px 6px;
+        white-space: normal;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
 
-  .slip-footer {
-    gap: 12px;
-    font-size: 0.78rem;
-  }
-}
+      .slip-footer {
+        gap: 12px;
+        font-size: 0.78rem;
+      }
+    }
 
     @media print {
-     body {
+      body {
         background: #fff !important;
         color: #000 !important;
       }
@@ -496,12 +560,13 @@
   </style>
 </head>
 <body>
- <!-- BACKGROUND ANIMASI CHAKRA -->
+  <!-- BACKGROUND ANIMASI CHAKRA -->
   <div class="chakra-bg-wrap" aria-hidden="true">
     <canvas id="chakraBgCanvas"></canvas>
     <div class="chakra-core-glow"></div>
     <div class="chakra-vignette"></div>
   </div>
+
   <!-- LAYAR SANDI MASUK -->
   <div id="lockScreen" class="card lock-screen">
     <div class="konoha-badge" style="margin: 0 auto 12px;">葉</div>
@@ -731,6 +796,135 @@
   </div>
 
   <script>
+    (function initChakraBackground() {
+      const canvas = document.getElementById("chakraBgCanvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+
+      let width = 0;
+      let height = 0;
+      let dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      resize();
+      window.addEventListener("resize", resize);
+
+      const sparks = Array.from({ length: 48 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: 0.4 + Math.random() * 1.4,
+        vy: -(0.5 + Math.random() * 1.6),
+        size: 1.2 + Math.random() * 2.6,
+        alpha: 0.25 + Math.random() * 0.75,
+        hue: 22 + Math.random() * 24
+      }));
+
+      const ribbons = [
+        { ampY: 95, freq: 0.0055, speed: 0.018, phase: 0.2, width: 3.2, color: "rgba(255, 196, 45, 0.72)" },
+        { ampY: 135, freq: 0.0042, speed: -0.013, phase: 1.5, width: 2.2, color: "rgba(255, 102, 0, 0.65)" },
+        { ampY: 70, freq: 0.007, speed: 0.024, phase: 2.8, width: 1.8, color: "rgba(255, 235, 130, 0.55)" },
+        { ampY: 160, freq: 0.0035, speed: 0.011, phase: 4.1, width: 2.5, color: "rgba(239, 68, 24, 0.52)" }
+      ];
+
+      let tick = 0;
+
+      function drawSpiral(cx, cy, baseRadius, rotation, color, lineWidth) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(rotation);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = lineWidth;
+        ctx.shadowColor = "rgba(255, 120, 0, 0.85)";
+        ctx.shadowBlur = 14;
+
+        ctx.beginPath();
+        const turns = 2.6;
+        const steps = 110;
+        for (let i = 0; i <= steps; i++) {
+          const t = i / steps;
+          const angle = t * Math.PI * 2 * turns;
+          const r = baseRadius * (1 - t * 0.78);
+          const x = Math.cos(angle) * r;
+          const y = Math.sin(angle) * r;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function animate() {
+        tick += 1;
+        ctx.clearRect(0, 0, width, height);
+
+        const coreX = width * 0.26;
+        const coreY = height * 0.48;
+        const radGrad = ctx.createRadialGradient(coreX, coreY, 10, coreX, coreY, Math.max(width, height) * 0.45);
+        radGrad.addColorStop(0, "rgba(255, 224, 102, 0.28)");
+        radGrad.addColorStop(0.35, "rgba(255, 106, 0, 0.15)");
+        radGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+        ctx.fillStyle = radGrad;
+        ctx.fillRect(0, 0, width, height);
+
+        ribbons.forEach((rb) => {
+          ctx.save();
+          ctx.beginPath();
+          ctx.strokeStyle = rb.color;
+          ctx.lineWidth = rb.width;
+          ctx.shadowColor = "rgba(255, 130, 0, 0.8)";
+          ctx.shadowBlur = 12;
+
+          const stepX = 18;
+          for (let x = -40; x <= width + 40; x += stepX) {
+            const wave1 = Math.sin(x * rb.freq + tick * rb.speed + rb.phase) * rb.ampY;
+            const wave2 = Math.cos(x * (rb.freq * 1.7) - tick * (rb.speed * 0.7)) * (rb.ampY * 0.35);
+            const y = height * 0.5 + wave1 + wave2;
+            if (x === -40) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+          ctx.restore();
+        });
+
+        const spiralX = width * 0.64;
+        const spiralY = height * 0.52;
+        const spiralBase = Math.min(width, height) * 0.22;
+        drawSpiral(spiralX, spiralY, spiralBase, tick * 0.012, "rgba(255, 185, 30, 0.65)", 2.4);
+        drawSpiral(spiralX, spiralY, spiralBase * 0.75, -tick * 0.018, "rgba(255, 90, 0, 0.5)", 1.6);
+
+        sparks.forEach((p) => {
+          p.x += p.vx + Math.sin((tick + p.y) * 0.02) * 0.35;
+          p.y += p.vy;
+
+          if (p.y < -15 || p.x > width + 20) {
+            p.x = Math.random() * (width * 0.75);
+            p.y = height + 15;
+          }
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.fillStyle = `hsla(${p.hue}, 100%, 62%, ${p.alpha})`;
+          ctx.shadowColor = `hsla(${p.hue}, 100%, 55%, 0.9)`;
+          ctx.shadowBlur = 8;
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    })();
+
     const SANDI_DEFAULT = "konoha2026";
     const BULAN_KEYS = [
       "januari", "februari", "maret", "april", "mei", "juni",
