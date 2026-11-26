@@ -2116,7 +2116,58 @@
         alert(`Terhapus di penyimpanan lokal, namun gagal memperbarui JSONBin.\nDetail: ${err.message}`);
       }
     }
-     
+
+    const GOOGLE_SHEET_WEB_APP_URL = "GANTI_DENGAN_WEB_APP_URL_KAMU";
+
+    async function simpanKeGoogleSheet() {
+      if (!GOOGLE_SHEET_WEB_APP_URL || GOOGLE_SHEET_WEB_APP_URL.startsWith("GANTI_")) {
+        alert("URL Google Apps Script belum diisi.");
+        return;
+      }
+
+      try {
+        const res = await fetch(GOOGLE_SHEET_WEB_APP_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ data: dataKaryawan })
+        });
+        const hasil = await res.json();
+        if (!hasil.ok) throw new Error(hasil.error || "Gagal menyimpan");
+        alert(`Berhasil menyimpan ${hasil.count} baris data ke Google Sheets!`);
+      } catch (err) {
+        console.error(err);
+        alert(`Gagal menyimpan ke Google Sheets: ${err.message}`);
+      }
+    }
+
+    async function muatDariGoogleSheet() {
+      if (!GOOGLE_SHEET_WEB_APP_URL || GOOGLE_SHEET_WEB_APP_URL.startsWith("GANTI_")) {
+        alert(https://drive.google.com/drive/folders/1tx4q3YOvhhvgeZQzk7__R_rqHxpeH0QP?usp=drive_link);
+        return;
+      }
+
+      try {
+        const res = await fetch(GOOGLE_SHEET_WEB_APP_URL);
+        const hasil = await res.json();
+        if (hasil.ok && Array.isArray(hasil.data) && hasil.data.length > 0) {
+          dataKaryawan = hasil.data.map((item) => ({
+            ...item,
+            tunjanganBulanan: buatTunjanganBulanan(
+              BULAN_KEYS.map((b) => Number(item.tunjanganBulanan?.[b]) || 0)
+            )
+          }));
+          selectedSlipId = dataKaryawan[0].id;
+          renderSemua();
+          alert(`Berhasil memuat ${dataKaryawan.length} baris data dari Google Sheets!`);
+        } else {
+          alert("Belum ada data tersimpan di Google Sheets.");
+        }
+      } catch (err) {
+        console.error("Gagal memuat dari Google Sheets:", err);
+        alert(`Gagal memuat dari Google Sheets: ${err.message}`);
+      }
+    }
+
     function renderSemua() {
       renderDaftarTable();
       renderTabelTunjanganBulanan(false);
