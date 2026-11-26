@@ -2116,7 +2116,37 @@
         alert(`Terhapus di penyimpanan lokal, namun gagal memperbarui JSONBin.\nDetail: ${err.message}`);
       }
     }
+       const SHEET_NAME = "DataKaryawan";
 
+function getSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  return ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
+}
+
+function doGet() {
+  const sheet = getSheet();
+  const rawCell = sheet.getRange("A1").getValue();
+  const parsed = rawCell ? JSON.parse(rawCell) : [];
+  return ContentService
+    .createTextOutput(JSON.stringify({ ok: true, data: parsed }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  try {
+    const body = JSON.parse(e.postData.contents || "{}");
+    const rows = Array.isArray(body.data) ? body.data : [];
+    const sheet = getSheet();
+    sheet.getRange("A1").setValue(JSON.stringify(rows));
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: true, count: rows.length }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: false, error: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
     function renderSemua() {
       renderDaftarTable();
       renderTabelTunjanganBulanan(false);
