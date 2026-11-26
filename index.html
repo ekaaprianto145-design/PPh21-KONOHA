@@ -2147,11 +2147,11 @@
 
     const GOOGLE_SHEET_ID = "1lD4vNXLvwC9V71M1-oUiTuacTbvi4jiPeBrSaiSj-T8";
     const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1lD4vNXLvwC9V71M1-oUiTuacTbvi4jiPeBrSaiSj-T8/edit?usp=sharing";
-    const GOOGLE_SHEET_WEB_APP_URL = "GANTI_DENGAN_WEB_APP_URL_KAMU";
+    const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycby2bEM8_PLrUnRkf8TkQqy2xhRHNooWcg2F2NsWDU9UHRk6nacWBecXxjtFs5dQh-bmcA/exec";
 
     async function simpanKeGoogleSheet() {
       if (!GOOGLE_SHEET_WEB_APP_URL || GOOGLE_SHEET_WEB_APP_URL.startsWith("GANTI_")) {
-        alert("URL Web App Google Apps Script belum diisi. Buka Sheet PPh 21, deploy sebagai Web App, lalu isi GOOGLE_SHEET_WEB_APP_URL.");
+        alert("URL Web App Google Apps Script belum diisi.");
         return;
       }
 
@@ -2172,7 +2172,7 @@
 
     async function muatDariGoogleSheet() {
       if (!GOOGLE_SHEET_WEB_APP_URL || GOOGLE_SHEET_WEB_APP_URL.startsWith("GANTI_")) {
-        alert("URL Web App Google Apps Script belum diisi. Buka Sheet PPh 21, deploy sebagai Web App, lalu isi GOOGLE_SHEET_WEB_APP_URL.");
+        alert("URL Web App Google Apps Script belum diisi.");
         return;
       }
 
