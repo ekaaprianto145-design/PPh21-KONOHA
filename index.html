@@ -663,15 +663,16 @@
               <button type="button" class="btn-success" onclick="tambahKaryawan()">+ Tambah Nama</button>
               <button type="button" class="btn-secondary" onclick="simpanKeGoogleSheet()">💾 Simpan ke Google Sheet</button>
               <button type="button" class="btn-secondary" onclick="muatDariGoogleSheet()">🔄 Muat dari Sheet</button>
+              <a class="btn-link btn-secondary" href="https://docs.google.com/spreadsheets/d/1lD4vNXLvwC9V71M1-oUiTuacTbvi4jiPeBrSaiSj-T8/edit?usp=sharing" target="_blank" rel="noopener noreferrer">📊 Sheet PPh 21</a>
               <a class="btn-link btn-secondary" href="https://drive.google.com/drive/folders/1tx4q3YOvhhvgeZQzk7__R_rqHxpeH0QP?usp=drive_link" target="_blank" rel="noopener noreferrer">📁 Folder PPh21 (Drive)</a>
               <button type="button" class="btn-primary" onclick="pindahHalaman('hitung')">Lihat Hasil Perhitungan →</button>
             </div>
           </div>
 
           <div class="drive-bar">
-            <span>📁 Folder Google Drive <strong>PPh21</strong> (0 file saat ini)</span>
-            <a href="https://drive.google.com/drive/folders/1tx4q3YOvhhvgeZQzk7__R_rqHxpeH0QP?usp=drive_link" target="_blank" rel="noopener noreferrer" style="color: var(--naruto-gold); font-weight: 600;">
-              Buka Folder PPh21 di Google Drive ↗
+            <span>📊 Sheet: <strong>PPh 21</strong> (<code>1lD4vNXLvwC9V71M1-oUiTuacTbvi4jiPeBrSaiSj-T8</code>)</span>
+            <a href="https://docs.google.com/spreadsheets/d/1lD4vNXLvwC9V71M1-oUiTuacTbvi4jiPeBrSaiSj-T8/edit?usp=sharing" target="_blank" rel="noopener noreferrer" style="color: var(--naruto-gold); font-weight: 600;">
+              Buka Google Sheet PPh 21 ↗
             </a>
           </div>
 
@@ -2144,11 +2145,13 @@
       }
     }
 
+    const GOOGLE_SHEET_ID = "1lD4vNXLvwC9V71M1-oUiTuacTbvi4jiPeBrSaiSj-T8";
+    const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1lD4vNXLvwC9V71M1-oUiTuacTbvi4jiPeBrSaiSj-T8/edit?usp=sharing";
     const GOOGLE_SHEET_WEB_APP_URL = "GANTI_DENGAN_WEB_APP_URL_KAMU";
 
     async function simpanKeGoogleSheet() {
       if (!GOOGLE_SHEET_WEB_APP_URL || GOOGLE_SHEET_WEB_APP_URL.startsWith("GANTI_")) {
-        alert("URL Google Apps Script belum diisi.");
+        alert("URL Web App Google Apps Script belum diisi. Buka Sheet PPh 21, deploy sebagai Web App, lalu isi GOOGLE_SHEET_WEB_APP_URL.");
         return;
       }
 
@@ -2156,7 +2159,7 @@
         const res = await fetch(GOOGLE_SHEET_WEB_APP_URL, {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ data: dataKaryawan })
+          body: JSON.stringify({ spreadsheetId: GOOGLE_SHEET_ID, data: dataKaryawan })
         });
         const hasil = await res.json();
         if (!hasil.ok) throw new Error(hasil.error || "Gagal menyimpan");
@@ -2169,12 +2172,12 @@
 
     async function muatDariGoogleSheet() {
       if (!GOOGLE_SHEET_WEB_APP_URL || GOOGLE_SHEET_WEB_APP_URL.startsWith("GANTI_")) {
-        alert("URL Google Apps Script belum diisi.");
+        alert("URL Web App Google Apps Script belum diisi. Buka Sheet PPh 21, deploy sebagai Web App, lalu isi GOOGLE_SHEET_WEB_APP_URL.");
         return;
       }
 
       try {
-        const res = await fetch(GOOGLE_SHEET_WEB_APP_URL);
+        const res = await fetch(`${GOOGLE_SHEET_WEB_APP_URL}?spreadsheetId=${encodeURIComponent(GOOGLE_SHEET_ID)}`);
         const hasil = await res.json();
         if (hasil.ok && Array.isArray(hasil.data) && hasil.data.length > 0) {
           dataKaryawan = hasil.data.map((item) => ({
